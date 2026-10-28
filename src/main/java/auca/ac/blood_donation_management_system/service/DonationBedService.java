@@ -55,4 +55,9 @@ public class DonationBedService {
         donationBedRepository.deleteById(id);
         return "Donation bed deleted successfully";
     }
+    
+public List<DonationBed> findFreeBeds() {
+    return donationBedRepository.findFreeBeds();
+}
+
 }

@@ -54,4 +54,9 @@ public class CertificationService {
         certificationRepository.deleteById(id);
         return "Certification deleted successfully";
     }
+    
+public List<Certification> findUnusedCertifications() {
+    return certificationRepository.findUnusedCertifications();
+}
+
 }

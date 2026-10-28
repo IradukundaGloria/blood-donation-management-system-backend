@@ -65,4 +65,10 @@ public class CertificationController {
             return ResponseEntity.ok(message);
         }
     }
+    
+@GetMapping("/unused")
+public List<Certification> findUnusedCertifications() {
+    return certificationService.findUnusedCertifications();
+}
+
 }

@@ -65,4 +65,10 @@ public class NurseController {
             return ResponseEntity.ok(message);
         }
     }
+    
+@GetMapping("/by-certification")
+public List<Nurse> findByCertification(@RequestParam String name) {
+    return nurseService.findByCertification(name);
+}
+
 }

@@ -65,4 +65,10 @@ public class DonationBedController {
             return ResponseEntity.ok(message);
         }
     }
+    
+@GetMapping("/free")
+public List<DonationBed> findFreeBeds() {
+    return donationBedService.findFreeBeds();
+}
+
 }

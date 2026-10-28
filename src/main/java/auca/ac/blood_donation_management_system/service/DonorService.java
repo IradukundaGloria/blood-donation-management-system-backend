@@ -1,8 +1,10 @@
 
+
 package auca.ac.blood_donation_management_system.service;
 
 import auca.ac.blood_donation_management_system.entity.Donor;
 import auca.ac.blood_donation_management_system.repository.DonorRepository;
+import auca.ac.blood_donation_management_system.repository.NurseRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +14,12 @@ import java.util.UUID;
 public class DonorService {
 
     private final DonorRepository donorRepository;
+    private final NurseRepository nurseRepository;
 
-    public DonorService(DonorRepository donorRepository) {
+    public DonorService(DonorRepository donorRepository,
+                        NurseRepository nurseRepository) {
         this.donorRepository = donorRepository;
+        this.nurseRepository = nurseRepository;
     }
 
     public String save(Donor donor) {
@@ -58,9 +63,16 @@ public class DonorService {
         donorRepository.deleteById(id);
         return "Donor deleted successfully";
     }
-    
-public List<Donor> findByLastName(String lastName) {
-    return donorRepository.findByLastNameIgnoreCaseOrderByFirstNameAsc(lastName);
-}
 
+    public List<Donor> findByLastName(String lastName) {
+        return donorRepository.findByLastNameIgnoreCaseOrderByFirstNameAsc(lastName);
+    }
+
+    public boolean nurseExists(UUID nurseId) {
+        return nurseRepository.existsById(nurseId);
+    }
+
+    public List<Donor> findDonorsOfNurse(UUID nurseId) {
+        return donorRepository.findDonorsOfNurse(nurseId);
+    }
 }

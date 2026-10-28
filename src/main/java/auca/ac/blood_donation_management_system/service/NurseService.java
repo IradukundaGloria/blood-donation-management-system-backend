@@ -58,4 +58,9 @@ public class NurseService {
         nurseRepository.deleteById(id);
         return "Nurse deleted successfully";
     }
+    
+public List<Nurse> findByCertification(String name) {
+    return nurseRepository.findByCertification(name);
+}
+
 }

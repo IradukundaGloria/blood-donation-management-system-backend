@@ -71,4 +71,15 @@ public List<Donor> findByLastName(@RequestParam String lastName) {
     return donorService.findByLastName(lastName);
 }
 
+@GetMapping("/of-nurse/{nurseId}")
+public ResponseEntity<?> findDonorsOfNurse(@PathVariable UUID nurseId) {
+    if (!donorService.nurseExists(nurseId)) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("The nurse with that id does not exist");
+    } else {
+        return ResponseEntity.ok(donorService.findDonorsOfNurse(nurseId));
+    }
+}
+
+
 }
