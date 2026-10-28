@@ -65,4 +65,10 @@ public class DonorController {
             return ResponseEntity.ok(message);
         }
     }
+    
+@GetMapping("/by-last-name")
+public List<Donor> findByLastName(@RequestParam String lastName) {
+    return donorService.findByLastName(lastName);
+}
+
 }

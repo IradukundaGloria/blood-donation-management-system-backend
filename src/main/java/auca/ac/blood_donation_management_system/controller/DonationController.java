@@ -2,10 +2,13 @@
 package auca.ac.blood_donation_management_system.controller;
 
 import auca.ac.blood_donation_management_system.entity.Donation;
+import auca.ac.blood_donation_management_system.entity.DonationStatus;
 import auca.ac.blood_donation_management_system.service.DonationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -65,4 +68,17 @@ public class DonationController {
             return ResponseEntity.ok(message);
         }
     }
+    
+@GetMapping("/by-status")
+public List<Donation> findByStatus(@RequestParam DonationStatus status) {
+    return donationService.findByStatus(status);
+}
+
+@GetMapping("/between")
+public List<Donation> findBetween(@RequestParam String start,
+                                  @RequestParam String end) {
+    return donationService.findBetween(
+            LocalDate.parse(start), LocalDate.parse(end));
+}
+
 }

@@ -58,4 +58,9 @@ public class DonorService {
         donorRepository.deleteById(id);
         return "Donor deleted successfully";
     }
+    
+public List<Donor> findByLastName(String lastName) {
+    return donorRepository.findByLastNameIgnoreCaseOrderByFirstNameAsc(lastName);
+}
+
 }

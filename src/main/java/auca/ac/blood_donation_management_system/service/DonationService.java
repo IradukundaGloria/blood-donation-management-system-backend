@@ -1,9 +1,13 @@
 
 package auca.ac.blood_donation_management_system.service;
 
+
 import auca.ac.blood_donation_management_system.entity.Donation;
+import auca.ac.blood_donation_management_system.entity.DonationStatus;
 import auca.ac.blood_donation_management_system.repository.DonationRepository;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -58,4 +62,13 @@ public class DonationService {
         donationRepository.deleteById(id);
         return "Donation deleted successfully";
     }
+    
+public List<Donation> findByStatus(DonationStatus status) {
+    return donationRepository.findByStatusOrderByDonationDateAsc(status);
+}
+
+public List<Donation> findBetween(LocalDate start, LocalDate end) {
+    return donationRepository.findByDonationDateBetweenOrderByDonationDateAsc(start, end);
+}
+
 }
