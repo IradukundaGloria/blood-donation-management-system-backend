@@ -7,6 +7,7 @@ import auca.ac.blood_donation_management_system.service.DonationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,11 +24,23 @@ public class DonationController {
         this.donationService = donationService;
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody Donation donation) {
-        String message = donationService.save(donation);
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
+  
+@PostMapping("/save")
+public ResponseEntity<String> save(@RequestBody Donation donation) {
+
+    String result = donationService.save(donation);
+
+    if (result.equals("Donation date cannot be in the past")) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
     }
+
+    if (result.equals("Nurse already collects a donation on that date")) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
+    }
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(result);
+}
+
 
     @GetMapping("/all")
     public List<Donation> findAll() {
@@ -80,5 +93,24 @@ public List<Donation> findBetween(@RequestParam String start,
     return donationService.findBetween(
             LocalDate.parse(start), LocalDate.parse(end));
 }
+
+@PatchMapping("/{id}/status")
+public ResponseEntity<String> updateStatus(
+        @PathVariable UUID id,
+        @RequestParam DonationStatus status) {
+
+    String result = donationService.updateStatus(id, status);
+
+    if (result.equals("The donation with that id does not exist")) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    }
+
+    if (result.startsWith("Cannot change status from")) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    }
+
+    return ResponseEntity.ok(result);
+}
+
 
 }

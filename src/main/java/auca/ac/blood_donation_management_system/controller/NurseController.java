@@ -71,4 +71,24 @@ public List<Nurse> findByCertification(@RequestParam String name) {
     return nurseService.findByCertification(name);
 }
 
+@PutMapping("/{nurseId}/certifications/{certificationId}")
+public ResponseEntity<String> addCertification(
+        @PathVariable UUID nurseId,
+        @PathVariable UUID certificationId) {
+
+    String result = nurseService.addCertification(nurseId, certificationId);
+
+    if (result.equals("The nurse with that id does not exist") ||
+        result.equals("That certification does not exist")) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    }
+
+    if (result.equals("The nurse already has that certification")) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
+    }
+
+    return ResponseEntity.ok(result);
+}
+
+
 }

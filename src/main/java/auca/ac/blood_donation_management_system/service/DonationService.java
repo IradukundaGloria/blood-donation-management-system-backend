@@ -21,10 +21,27 @@ public class DonationService {
         this.donationRepository = donationRepository;
     }
 
-    public String save(Donation donation) {
-        donationRepository.save(donation);
-        return "Donation saved successfully";
+   
+public String save(Donation donation) {
+
+    if (donation.getDonationDate().isBefore(LocalDate.now())) {
+        return "Donation date cannot be in the past";
     }
+
+    if (donationRepository.existsByNurseIdAndDonationDateAndStatusNot(
+            donation.getNurse().getId(),
+            donation.getDonationDate(),
+            DonationStatus.DEFERRED)) {
+
+        return "Nurse already collects a donation on that date";
+    }
+
+    donation.setStatus(DonationStatus.REGISTERED);
+    donationRepository.save(donation);
+
+    return "Donation saved successfully";
+}
+
 
     public List<Donation> findAll() {
         return donationRepository.findAll();
@@ -43,7 +60,6 @@ public class DonationService {
 
         Donation saved = existing.get();
         saved.setDonationDate(donation.getDonationDate());
-        saved.setStatus(donation.getStatus());
         saved.setHemoglobinLevel(donation.getHemoglobinLevel());
         saved.setDonor(donation.getDonor());
         saved.setNurse(donation.getNurse());
@@ -69,6 +85,41 @@ public List<Donation> findByStatus(DonationStatus status) {
 
 public List<Donation> findBetween(LocalDate start, LocalDate end) {
     return donationRepository.findByDonationDateBetweenOrderByDonationDateAsc(start, end);
+}
+
+public String updateStatus(UUID id, DonationStatus newStatus) {
+
+    Optional<Donation> existing = donationRepository.findById(id);
+
+    if (existing.isEmpty()) {
+        return "The donation with that id does not exist";
+    }
+
+    Donation donation = existing.get();
+    DonationStatus currentStatus = donation.getStatus();
+
+    boolean allowed = false;
+
+    if (currentStatus == DonationStatus.REGISTERED) {
+        if (newStatus == DonationStatus.SCREENED ||
+            newStatus == DonationStatus.DEFERRED) {
+            allowed = true;
+        }
+    } else if (currentStatus == DonationStatus.SCREENED) {
+        if (newStatus == DonationStatus.COLLECTED ||
+            newStatus == DonationStatus.DEFERRED) {
+            allowed = true;
+        }
+    }
+
+    if (!allowed) {
+        return "Cannot change status from " + currentStatus + " to " + newStatus;
+    }
+
+    donation.setStatus(newStatus);
+    donationRepository.save(donation);
+
+    return "Donation status updated successfully";
 }
 
 }
