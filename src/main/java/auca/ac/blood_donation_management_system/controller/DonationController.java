@@ -7,7 +7,6 @@ import auca.ac.blood_donation_management_system.service.DonationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -71,16 +70,23 @@ public ResponseEntity<String> save(@RequestBody Donation donation) {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable UUID id) {
-        String message = donationService.delete(id);
+   
+@DeleteMapping("/delete/{id}")
+public ResponseEntity<String> delete(@PathVariable UUID id) {
 
-        if (message.equals("The donation with that id does not exist")) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
-        } else {
-            return ResponseEntity.ok(message);
-        }
+    String result = donationService.delete(id);
+
+    if (result.equals("The donation with that id does not exist")) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
     }
+
+    if (result.equals("That donation has blood units, delete them first")) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
+    }
+
+    return ResponseEntity.ok(result);
+}
+
     
 @GetMapping("/by-status")
 public List<Donation> findByStatus(@RequestParam DonationStatus status) {

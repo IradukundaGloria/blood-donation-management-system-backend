@@ -90,5 +90,23 @@ public ResponseEntity<String> addCertification(
     return ResponseEntity.ok(result);
 }
 
+@PatchMapping("/{nurseId}/donation-bed")
+public ResponseEntity<String> changeDonationBed(
+        @PathVariable UUID nurseId,
+        @RequestParam int bedNumber) {
+
+    String result = nurseService.changeDonationBed(nurseId, bedNumber);
+
+    if (result.equals("The nurse with that id does not exist") ||
+        result.equals("The donation bed with that bedNumber does not exist")) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    }
+
+    if (result.equals("That donation bed is taken by another nurse")) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
+    }
+
+    return ResponseEntity.ok(result);
+}
 
 }

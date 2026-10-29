@@ -6,7 +6,7 @@ import auca.ac.blood_donation_management_system.entity.Donation;
 import auca.ac.blood_donation_management_system.entity.DonationStatus;
 import auca.ac.blood_donation_management_system.repository.DonationRepository;
 import org.springframework.stereotype.Service;
-
+import auca.ac.blood_donation_management_system.repository.BloodUnitRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +16,13 @@ import java.util.UUID;
 public class DonationService {
 
     private final DonationRepository donationRepository;
+    private final BloodUnitRepository bloodUnitRepository;
 
-    public DonationService(DonationRepository donationRepository) {
-        this.donationRepository = donationRepository;
-    }
+    public DonationService(DonationRepository donationRepository,
+                       BloodUnitRepository bloodUnitRepository) {
+    this.donationRepository = donationRepository;
+    this.bloodUnitRepository = bloodUnitRepository;
+}
 
    
 public String save(Donation donation) {
@@ -68,16 +71,22 @@ public String save(Donation donation) {
         return "Donation updated successfully";
     }
 
-    public String delete(UUID id) {
-        Optional<Donation> existing = donationRepository.findById(id);
+   
+public String delete(UUID id) {
 
-        if (existing.isEmpty()) {
-            return "The donation with that id does not exist";
-        }
-
-        donationRepository.deleteById(id);
-        return "Donation deleted successfully";
+    if (!donationRepository.existsById(id)) {
+        return "The donation with that id does not exist";
     }
+
+    if (bloodUnitRepository.existsByDonationId(id)) {
+        return "That donation has blood units, delete them first";
+    }
+
+    donationRepository.deleteById(id);
+
+    return "Donation deleted successfully";
+}
+
     
 public List<Donation> findByStatus(DonationStatus status) {
     return donationRepository.findByStatusOrderByDonationDateAsc(status);
