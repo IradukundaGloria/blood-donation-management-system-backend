@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DonationService {
@@ -130,5 +131,23 @@ public String updateStatus(UUID id, DonationStatus newStatus) {
 
     return "Donation status updated successfully";
 }
+
+public List<Object[]> countDonationsByStatus() {
+    return donationRepository.countDonationsByStatus();
+}
+
+@Transactional
+public String cancelDay(UUID nurseId, LocalDate date) {
+
+    int count = donationRepository.cancelDonationsByNurseAndDate(
+            nurseId,
+            date,
+            DonationStatus.DEFERRED,
+            DonationStatus.COLLECTED
+    );
+
+    return count + " donations cancelled";
+}
+
 
 }

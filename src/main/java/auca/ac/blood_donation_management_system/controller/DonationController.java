@@ -7,6 +7,7 @@ import auca.ac.blood_donation_management_system.service.DonationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -117,6 +118,25 @@ public ResponseEntity<String> updateStatus(
 
     return ResponseEntity.ok(result);
 }
+
+@GetMapping("/stats/by-status")
+public List<Object[]> countDonationsByStatus() {
+    return donationService.countDonationsByStatus();
+}
+
+@PatchMapping("/cancel-day")
+public ResponseEntity<String> cancelDay(
+        @RequestParam UUID nurseId,
+        @RequestParam String date) {
+
+    String result = donationService.cancelDay(
+            nurseId,
+            LocalDate.parse(date)
+    );
+
+    return ResponseEntity.ok(result);
+}
+
 
 
 }
