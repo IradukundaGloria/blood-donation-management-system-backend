@@ -39,5 +39,9 @@ int cancelDonationsByNurseAndDate(
         @Param("collected") DonationStatus collected
 );
 
+long countByDonationDate(LocalDate donationDate);
+
+long countByStatus(DonationStatus status);
+
 
 }

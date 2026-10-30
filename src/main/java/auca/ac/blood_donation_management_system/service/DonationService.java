@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class DonationService {
@@ -147,6 +149,10 @@ public String cancelDay(UUID nurseId, LocalDate date) {
     );
 
     return count + " donations cancelled";
+}
+
+public Page<Donation> findPage(Pageable pageable) {
+    return donationRepository.findAll(pageable);
 }
 
 

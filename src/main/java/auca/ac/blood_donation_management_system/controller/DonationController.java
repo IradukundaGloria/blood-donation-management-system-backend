@@ -7,8 +7,9 @@ import auca.ac.blood_donation_management_system.service.DonationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PatchMapping;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -137,6 +138,27 @@ public ResponseEntity<String> cancelDay(
     return ResponseEntity.ok(result);
 }
 
+@GetMapping("/page")
+public Page<Donation> findPage(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "donationDate,desc") String sort) {
+
+    String[] parts = sort.split(",");
+
+    Sort.Direction direction = Sort.Direction.DESC;
+
+    if (parts.length > 1 &&
+        parts[1].equalsIgnoreCase("asc")) {
+        direction = Sort.Direction.ASC;
+    }
+
+    Sort sorting = Sort.by(direction, parts[0]);
+
+    return donationService.findPage(
+            PageRequest.of(page, size, sorting)
+    );
+}
 
 
 }
